@@ -26,28 +26,22 @@ def image_to_video(
     image_path: str,
     output_path: str,
     motion_prompt: str,
-    num_frames: int = 14,   # 🔻 reduced
+    num_frames: int = 18,   # ↑ more frames
 ):
-    """
-    Colab-safe image-to-video generation
-    """
-
     pipe = get_pipe()
 
     image = Image.open(image_path).convert("RGB")
-    image = image.resize((512, 512))  # 🔻 enforce small resolution
+    image = image.resize((384, 384))  # ↓ smaller = more motion
 
     with torch.no_grad():
         video_frames = pipe(
             image=image,
-            motion_bucket_id=80,        # 🔻 reduced motion
+            motion_bucket_id=160,      # 🔥 MUCH higher motion
             fps=6,
             num_frames=num_frames,
-            noise_aug_strength=0.01,
-            decode_chunk_size=2,        # 🔻 crucial
+            noise_aug_strength=0.08,   # 🔥 forces movement
+            decode_chunk_size=1,       # slower but safer
         ).frames[0]
-
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
     import imageio
     imageio.mimsave(
@@ -58,5 +52,6 @@ def image_to_video(
     )
 
     torch.cuda.empty_cache()
-
     return output_path
+
+
