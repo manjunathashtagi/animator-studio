@@ -1,46 +1,47 @@
-from moviepy.editor import ImageClip
+from PIL import Image
 import numpy as np
+from moviepy.editor import ImageSequenceClip
+import os
 
 
 def animate_image(image_path, duration, output_path):
     """
-    Stable cinematic animation:
-    - Slow zoom using cropping (no pixel tearing)
-    - Gentle vertical pan
+    Guaranteed-stable animation:
+    - Manual frame generation (no MoviePy transforms)
+    - Slow zoom + gentle vertical drift
     """
 
-    base = ImageClip(image_path)
-    W, H = base.size
+    fps = 30
+    total_frames = int(duration * fps)
 
-    # Create a slightly larger virtual canvas
-    zoom_factor = 1.15
-    big = base.resize(zoom_factor).set_duration(duration)
+    img = Image.open(image_path).convert("RGB")
+    W, H = img.size
 
-    BW, BH = big.size
+    frames = []
 
-    def crop_position(t):
-        # Progress 0 → 1
-        p = t / duration
+    for i in range(total_frames):
+        t = i / total_frames
 
-        # Vertical gentle movement
-        y_shift = int(20 * np.sin(2 * np.pi * p))
+        # Zoom from 1.0 → 1.1
+        zoom = 1 + 0.1 * t
+        new_w = int(W * zoom)
+        new_h = int(H * zoom)
 
-        # Center crop + drift
-        x1 = int((BW - W) / 2)
-        y1 = int((BH - H) / 2 + y_shift)
+        resized = img.resize((new_w, new_h), Image.LANCZOS)
 
-        return big.crop(
-            x1=x1,
-            y1=y1,
-            width=W,
-            height=H
-        )
+        # Vertical drift
+        y_shift = int(20 * np.sin(2 * np.pi * t))
 
-    animated = big.fl(lambda gf, t: crop_position(t).get_frame(0))
+        # Center crop back to original size
+        left = (new_w - W) // 2
+        top = (new_h - H) // 2 + y_shift
 
-    animated.write_videofile(
+        frame = resized.crop((left, top, left + W, top + H))
+        frames.append(np.array(frame))
+
+    clip = ImageSequenceClip(frames, fps=fps)
+    clip.write_videofile(
         output_path,
-        fps=30,
         codec="libx264",
         audio=False,
         verbose=False,
