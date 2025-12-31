@@ -1,0 +1,14 @@
+safety:
+  allow_realistic_humans: false
+  allow_explicit_sex: false
+  allow_minors: false
+
+nsfw_limits:
+  allowed:
+    - sensual
+    - erotic
+    - suggestive
+  forbidden:
+    - explicit_act
+    - genital_focus
+    - penetration

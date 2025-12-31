@@ -1,0 +1,6 @@
+pydantic
+pyyaml
+moviepy
+opencv-python
+numpy
+Pillow

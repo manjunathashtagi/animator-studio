@@ -1,0 +1,19 @@
+app:
+  name: animator-studio
+  version: 1.0
+  default_mode: SAFE
+
+render:
+  preview_resolution: 720
+  final_resolution: 1080
+  fps: 30
+
+paths:
+  previews: outputs/previews
+  scenes: outputs/scenes
+  final_videos: outputs/final_videos
+
+nsfw:
+  enabled: true
+  hidden: true
+  upload_allowed: false
