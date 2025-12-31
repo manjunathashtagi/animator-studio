@@ -10,7 +10,7 @@ def animate_image(image_path, duration, output_path):
         ImageClip(image_path)
         .set_duration(duration)
         .resize(height=720)
-        .fx(lambda c: c.resize(1.05))
+        .fx(lambda c: c.resize(1.02))
     )
 
     video = CompositeVideoClip([clip])
@@ -24,3 +24,4 @@ def animate_image(image_path, duration, output_path):
     )
 
     return output_path
+
