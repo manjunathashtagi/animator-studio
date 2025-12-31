@@ -3,23 +3,47 @@ from PIL import Image, ImageDraw, ImageFont
 from core.animator_2_5d import animate_image
 
 
+import os
+from PIL import Image, ImageDraw, ImageFont
+from core.animator_2_5d import animate_image
+
+
 def generate_scene_image(scene, output_dir):
-    """
-    Temporary visual generator:
-    creates a simple image with scene text.
-    (This will later be replaced by AI image generation)
-    """
     os.makedirs(output_dir, exist_ok=True)
 
-    img = Image.new("RGB", (1280, 720), color=(20, 20, 20))
+    # Bigger canvas
+    img = Image.new("RGB", (1280, 720), color=(10, 10, 10))
     draw = ImageDraw.Draw(img)
 
-    text = f"Scene {scene.id}\n{scene.type}\n\n{scene.text[:200]}"
-    draw.multiline_text((50, 100), text, fill=(230, 230, 230))
+    # Try to use a bigger font
+    try:
+        font = ImageFont.truetype("DejaVuSans-Bold.ttf", 48)
+        small_font = ImageFont.truetype("DejaVuSans.ttf", 32)
+    except:
+        font = ImageFont.load_default()
+        small_font = ImageFont.load_default()
+
+    # Title
+    draw.text(
+        (60, 60),
+        f"Scene {scene.id} — {scene.type}",
+        fill=(255, 200, 80),
+        font=font
+    )
+
+    # Body text
+    draw.multiline_text(
+        (60, 160),
+        scene.text,
+        fill=(220, 220, 220),
+        font=small_font,
+        spacing=10
+    )
 
     image_path = os.path.join(output_dir, f"scene_{scene.id}.png")
     img.save(image_path)
     return image_path
+
 
 
 def generate_preview(scene):
@@ -41,3 +65,4 @@ def generate_preview(scene):
     )
 
     return preview_path
+
