@@ -4,22 +4,41 @@ import numpy as np
 
 def animate_image(image_path, duration, output_path):
     """
-    Stable 2.5D animation using time-based lambdas
-    (MoviePy-safe, no fl(), no frame hacks)
+    Stable cinematic animation:
+    - Slow zoom using cropping (no pixel tearing)
+    - Gentle vertical pan
     """
 
-    clip = ImageClip(image_path).set_duration(duration)
-    w, h = clip.size
+    base = ImageClip(image_path)
+    W, H = base.size
 
-    # Time-based zoom
-    clip = clip.resize(lambda t: 1 + 0.08 * (t / duration))
+    # Create a slightly larger virtual canvas
+    zoom_factor = 1.15
+    big = base.resize(zoom_factor).set_duration(duration)
 
-    # Time-based vertical drift
-    clip = clip.set_position(
-        lambda t: ("center", h / 2 + 20 * np.sin(2 * np.pi * t / duration))
-    )
+    BW, BH = big.size
 
-    clip.write_videofile(
+    def crop_position(t):
+        # Progress 0 → 1
+        p = t / duration
+
+        # Vertical gentle movement
+        y_shift = int(20 * np.sin(2 * np.pi * p))
+
+        # Center crop + drift
+        x1 = int((BW - W) / 2)
+        y1 = int((BH - H) / 2 + y_shift)
+
+        return big.crop(
+            x1=x1,
+            y1=y1,
+            width=W,
+            height=H
+        )
+
+    animated = big.fl(lambda gf, t: crop_position(t).get_frame(0))
+
+    animated.write_videofile(
         output_path,
         fps=30,
         codec="libx264",
