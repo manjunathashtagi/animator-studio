@@ -23,15 +23,13 @@ def image_to_video(
     image_path: str,
     output_path: str,
     motion_prompt: str,
-    num_frames: int = 24,
+    num_frames: int = 12,   # fewer frames
+    resolution: int = 512,  # downscale
 ):
-    """
-    Generates short character-motion video from a single image
-    """
-
     pipe = get_pipe()
 
     image = Image.open(image_path).convert("RGB")
+    image = image.resize((resolution, resolution))
 
     video_frames = pipe(
         image=image,
@@ -44,11 +42,10 @@ def image_to_video(
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
     import imageio
-    imageio.mimsave(
-        output_path,
-        video_frames,
-        fps=6,
-        codec="libx264"
-    )
+    imageio.mimsave(output_path, video_frames, fps=6, codec="libx264")
+
+    torch.cuda.empty_cache()  # free memory after use
 
     return output_path
+
+
