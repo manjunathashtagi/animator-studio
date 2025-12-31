@@ -4,6 +4,12 @@ from core.image_to_video import image_to_video
 from core.animator_2_5d import animate_image
 
 
+import os
+from core.cartoon_image_generator import generate_cartoon_image
+from core.image_to_video import image_to_video
+from core.animator_2_5d import animate_image
+
+
 def generate_preview(scene, motion_mode="camera"):
     preview_dir = "outputs/previews"
     image_dir = "outputs/previews/images"
@@ -29,3 +35,4 @@ def generate_preview(scene, motion_mode="camera"):
             duration=scene.duration,
             output_path=preview_path
         )
+
