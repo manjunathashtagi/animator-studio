@@ -30,7 +30,7 @@ def image_to_video(image_path, output_path, num_frames=12):
     pipe = get_pipe()
 
     image = Image.open(image_path).convert("RGB")
-    image = image.resize((384, 384))
+    image = image.resize((512, 512))
 
     gc.collect()
     torch.cuda.empty_cache()
@@ -58,5 +58,6 @@ def image_to_video(image_path, output_path, num_frames=12):
     )
 
     return output_path
+
 
 
