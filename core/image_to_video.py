@@ -26,7 +26,7 @@ def get_pipe():
     return _pipe
 
 
-def image_to_video(image_path, output_path, num_frames=12):
+def image_to_video(image_path, output_path, num_frames=14):
     pipe = get_pipe()
 
     image = Image.open(image_path).convert("RGB")
@@ -40,9 +40,9 @@ def image_to_video(image_path, output_path, num_frames=12):
         result = pipe(
             image=image,
             num_frames=num_frames,
-            fps=6,
+            fps=8,
             motion_bucket_id=80,
-            noise_aug_strength=0.02,
+            noise_aug_strength=0.015,
             decode_chunk_size=1
         )
 
@@ -53,8 +53,9 @@ def image_to_video(image_path, output_path, num_frames=12):
     imageio.mimsave(
         output_path,
         frames,
-        fps=6,
+        fps=8,
         codec="libx264"
     )
 
     return output_path
+
