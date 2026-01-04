@@ -32,7 +32,12 @@ def generate_cartoon_image(scene, output_dir):
     # ✅ THIS IS NOW GUARANTEED TO EXIST
     prompt = scene.text
 
-    negative_prompt = "blurry, low quality, distorted face"
+    negative_prompt = (
+    "blurry face, soft focus, out of focus, "
+    "distorted face, bad eyes, crossed eyes, "
+    "bad nose, low detail face, low resolution"
+    )
+
 
     image = pipe(
         prompt=prompt,
@@ -45,3 +50,4 @@ def generate_cartoon_image(scene, output_dir):
     image.save(output_path)
 
     return output_path
+
