@@ -1,3 +1,5 @@
+# core/cartoon_image_generator.py
+
 import torch
 from diffusers import StableDiffusionPipeline
 
@@ -27,7 +29,9 @@ def get_pipe():
 def generate_cartoon_image(scene, output_dir):
     pipe = get_pipe()
 
-    prompt = scene.prompt
+    # ✅ THIS IS NOW GUARANTEED TO EXIST
+    prompt = scene.text
+
     negative_prompt = "blurry, low quality, distorted face"
 
     image = pipe(
