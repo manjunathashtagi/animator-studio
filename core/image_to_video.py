@@ -26,7 +26,7 @@ def get_pipe():
     return _pipe
 
 
-def image_to_video(image_path, output_path, num_frames=14):
+def image_to_video(image_path, output_path, num_frames=12):
     pipe = get_pipe()
 
     image = Image.open(image_path).convert("RGB")
@@ -40,9 +40,9 @@ def image_to_video(image_path, output_path, num_frames=14):
         result = pipe(
             image=image,
             num_frames=num_frames,
-            fps=8,
+            fps=6,
             motion_bucket_id=80,
-            noise_aug_strength=0.015,
+            noise_aug_strength=0.02,
             decode_chunk_size=1
         )
 
@@ -58,4 +58,5 @@ def image_to_video(image_path, output_path, num_frames=14):
     )
 
     return output_path
+
 
